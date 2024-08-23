@@ -1,7 +1,7 @@
-import {FileOutput, OutDir} from '@subsquid/util-internal-code-printer'
-import {SquidArchive, SquidChainRpc, SquidContract} from './interfaces'
+import { FileOutput, OutDir } from '@subsquid/util-internal-code-printer'
+import { SquidArchive, SquidChainRpc, SquidContract } from './interfaces'
 import path from 'path'
-import {resolveModule} from '@subsquid/squid-gen-utils'
+import { resolveModule } from '@subsquid/squid-gen-utils'
 
 export class ProcessorCodegen {
     private out: FileOutput
@@ -24,11 +24,14 @@ export class ProcessorCodegen {
     generate() {
         this.printImports()
         this.out.line()
+        this.out.line("const API_KEY = process.env.API_KEY")
         this.out.line(`export const processor = new EvmBatchProcessor()`)
         this.out.indentation(() => {
             this.out.line(`.setDataSource({`)
             this.out.indentation(() => {
-                if (this.options.archive.kind === 'name') {
+                if (this.options.archive.kind === 'None') {
+                    // do nothing
+                } else if (this.options.archive.kind === 'name') {
                     this.useArchiveRegistry()
                     this.out.line(`archive: lookupArchive('${this.options.archive.value}', {type: 'EVM'}),`)
                 } else {
@@ -100,20 +103,20 @@ export class ProcessorCodegen {
         if (typeof this.options.chain === 'string') {
             this.out.line(`chain: '${this.options.chain}',`)
             return
-        } 
+        }
 
         this.out.line(`chain: {`)
         this.out.indentation(() => {
             if (!this.options.chain) {
                 return
             }
-    
+
             if (typeof this.options.chain === 'string') {
-                this.out.line(`url: '${this.options.chain}',`)
+                this.out.line(`url: \`${this.options.chain}\`,`)
                 return
-            } 
-    
-            this.out.line(`url: '${this.options.chain.url}',`)
+            }
+
+            this.out.line(`url: \`${this.options.chain.url}\`,`)
             if (this.options.chain.capacity != null) {
                 this.out.line(`capacity: ${this.options.chain.capacity},`)
             }
@@ -127,7 +130,7 @@ export class ProcessorCodegen {
                 this.out.line(`maxBatchCallSize: ${this.options.chain.maxBatchCallSize},`)
             }
         })
-        this.out.line(`},`) 
+        this.out.line(`},`)
     }
 
     private printSubscribes() {

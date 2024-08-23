@@ -46,7 +46,11 @@ export function getArchive(str: string): SquidArchive {
             kind: 'name',
         }
     } else {
-        throw new Error(`Invalid archive "${str}"`)
+        // throw new Error(`Invalid archive "${str}"`)
+        return {
+            value: 'None',
+            kind: 'None',
+        }
     }
 }
 

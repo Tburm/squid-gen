@@ -18,7 +18,7 @@ export interface SquidContract {
 
 export interface SquidArchive {
     value: string
-    kind: 'url' | 'name'
+    kind: 'url' | 'name' | 'None'
 }
 
 export type SquidChainRpc = string | {
